@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RavenStore TxT</title>
+<style>
+:root{--bg:#0a0a0f;--card:#14141d;--card2:#1b1b28;--line:#2a2a3d;--tx:#ececf5;--mut:#8c8ca6;--pp:#8b5cf6;--pp2:#6d28d9;--glow:rgba(139,92,246,.25);--ok:#34d399;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(900px 400px at 50% -100px,var(--glow),transparent),var(--bg);color:var(--tx);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+.wrap{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
+header{text-align:center;padding:20px 0 24px}
+.logo{font-size:12px;letter-spacing:.3em;color:var(--pp);font-weight:700}
+h1{margin:6px 0;font-size:clamp(28px,6vw,44px);letter-spacing:-.02em;background:linear-gradient(90deg,#fff,#b79cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mut);margin:0}
+.grid{display:grid;gap:16px;grid-template-columns:1fr 1fr}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px;transition:border-color .25s,box-shadow .25s;animation:in .4s ease both}
+.card:hover{border-color:#4b3a85;box-shadow:0 0 30px -12px var(--pp)}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h2{margin:0 0 12px;font-size:13px;letter-spacing:.14em;color:var(--pp);font-weight:700}
+select option{background:#14141d}
+input,textarea,select{width:100%;background:#0e0e16;border:1px solid var(--line);border-radius:12px;color:var(--tx);padding:12px 14px;font:inherit;outline:none;transition:border-color .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--pp)}
+textarea{resize:vertical;min-height:90px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+button{border:0;border-radius:12px;padding:11px 16px;font:600 14px inherit;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--pp),var(--pp2));transition:transform .15s,opacity .2s,box-shadow .2s}
+button:hover{box-shadow:0 6px 20px -6px var(--pp)}button:active{transform:scale(.97)}
+button:disabled{opacity:.5;cursor:wait}
+button.g{background:#1f1f2e;border:1px solid var(--line);color:var(--tx)}
+button.on{color:#fbbf24;border-color:#fbbf24}
+.opts{display:grid;gap:10px;grid-template-columns:1fr 2fr 1fr}
+@media(max-width:720px){.opts{grid-template-columns:1fr}}
+label{font-size:12px;color:var(--mut);display:block;margin:0 0 4px}
+.out{margin-top:12px}
+.cnt{font-size:12px;color:var(--mut);margin-top:4px}
+.cnt.bad{color:#f87171}
+.prev{white-space:pre-wrap;background:#0e0e16;border:1px dashed #4b3a85;border-radius:14px;padding:16px;font-size:14px;max-height:520px;overflow:auto}
+.prev b{display:block;font-size:16px;margin-bottom:12px;color:#fff}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs button{background:#1f1f2e;border:1px solid var(--line)}.tabs button.a{background:var(--pp2);border-color:var(--pp)}
+.item{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;background:#0e0e16}
+.item .t{font-weight:600;margin-bottom:4px;word-break:break-word}.item small{color:var(--mut)}
+.err{color:#f87171;font-size:13px;margin-top:8px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(40px);background:var(--ok);color:#04130c;padding:10px 18px;border-radius:99px;font-weight:700;opacity:0;transition:.3s;z-index:9}
+.toast.s{opacity:1;transform:translateX(-50%)}
+.warn{font-size:12px;color:var(--mut);text-align:center;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="logo">RAVENSTORE</div><h1>RavenStore TxT</h1><p class="sub">Transforme qualquer produto em um anúncio profissional em segundos.</p></header>
+
+<section class="card">
+<h2>🔑 SUA CHAVE GRATUITA (GROQ)</h2>
+<input id="key" type="password" placeholder="Cole aqui sua chave (gsk_...)" autocomplete="off">
+<div class="row"><button id="sk">💾 Salvar chave</button><button id="ck" class="g">🗑️ Remover</button></div>
+<div class="cnt" id="ks"></div></section>
+<section class="card">
+<h2>⚙️ DADOS DO PRODUTO (OPCIONAL)</h2>
+<div class="opts">
+<div><label>Categoria</label><select id="cat"><option>Detectar automaticamente</option><option>Streaming (Netflix, Prime Video, HBO Max, Disney+…)</option><option>App de filmes, séries ou TV</option><option>Assinatura de games (Game Pass, PS Plus, Nintendo Online…)</option><option>Jogo ou conta (Steam, Xbox, PlayStation…)</option><option>Console ou acessório (produto físico)</option><option>Gift card ou créditos</option><option>Outro produto</option></select></div>
+<div><label>Detalhes reais: duração, bônus, entrega, prazo, regras…</label><input id="det" placeholder="Ex: 3 meses, +90 dias de renovação de brinde, entrega automática"></div>
+<div><label>Limite de caracteres do título</label><input id="lim" type="number" value="100" min="30" max="300"></div>
+</div>
+</section>
+
+<div class="grid">
+<section class="card"><h2>✨ GERADOR DE TÍTULOS</h2>
+<input id="pt" placeholder="Digite o produto. Ex: Netflix, PS5, Game Pass">
+<div class="row"><button id="bt">✨ GERAR TÍTULO</button></div>
+<div class="err" id="et"></div></section>
+<section class="card"><h2>🚀 GERADOR DE DESCRIÇÕES</h2>
+<input id="pd" placeholder="Digite o produto. Ex: Xbox">
+<div class="row"><button id="bd">🚀 GERAR DESCRIÇÃO</button></div>
+<div class="err" id="ed"></div></section>
+</div>
+
+<section class="card"><h2>⚡ GERAÇÃO COMPLETA</h2>
+<input id="pf" placeholder="Digite o produto. Ex: Xbox">
+<div class="row"><button id="bf">⚡ GERAR TÍTULO + DESCRIÇÃO</button></div>
+<div class="err" id="ef"></div></section>
+
+<section class="card" id="res" style="display:none"><h2>📝 ANÚNCIO (EDITÁVEL)</h2>
+<label>Título</label><textarea id="rt" style="min-height:60px"></textarea>
+<div class="cnt" id="cc"></div>
+<div class="row"><button class="g" data-c="t">📋 Copiar título</button><button id="nt" class="g">🔄 Novo título</button></div>
+<label style="margin-top:14px">Descrição</label><textarea id="rd" style="min-height:260px"></textarea>
+<div class="row"><button class="g" data-c="d">📋 Copiar descrição</button><button id="nd" class="g">🔄 Nova descrição</button></div>
+<div class="row" style="margin-top:14px"><button data-c="a">📋 COPIAR TUDO</button><button id="fav" class="g">⭐ Favoritar</button><button id="ns" class="g">🔄 Nova versão completa</button></div>
+<h2 style="margin-top:20px">👁️ PRÉ-VISUALIZAÇÃO</h2>
+<div class="prev" id="prev"></div></section>
+
+<section class="card"><div class="tabs"><button class="a" data-tab="h">🕘 Histórico</button><button data-tab="f">⭐ Favoritos</button></div><div id="list"></div></section>
+<p class="warn">Revise sempre os campos marcados com [CONFIRMAR] antes de publicar. A IA não inventa preços, bônus ou garantias.</p>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const SYS="Você é redator sênior de anúncios para marketplaces de produtos digitais e físicos (streamings, apps de filmes, consoles, jogos, assinaturas, gift cards) como o GameMarket. Se o produto for físico (console, acessório), adapte a entrega para envio e rastreio e não use o termo entrega automática; se for digital, adapte à entrega digital. Escreva em português brasileiro, tom profissional e persuasivo, emojis relacionados ao produto e em quantidade equilibrada. NUNCA invente preços, bônus, prazos, garantias ou condições que não foram informados; quando faltar um dado essencial, escreva [CONFIRMAR: o que falta]. Adapte tudo ao produto específico, sem texto genérico. Evite repetições.";
+let st={t:"",d:"",p:"",v:0},hist=[],favs=[],tab="h";
+const ld=k=>{try{return JSON.parse(localStorage.getItem(k)||"[]")}catch(e){return[]}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+hist=ld("rs_h");favs=ld("rs_f");
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("s");setTimeout(()=>t.classList.remove("s"),1600)}
+function ctx(p){const d=$("#det").value.trim();return "Produto: "+p+"\nCategoria: "+$("#cat").value+"\nDetalhes informados: "+(d||"nenhum (sinalize com [CONFIRMAR] o que for essencial)")+"\nVersão nº "+st.v+" (varie estilo e estrutura das versões anteriores)."}
+const pT=p=>ctx(p)+"\nCrie UM título de anúncio chamativo, com emojis, benefícios reais e linguagem comercial, com no máximo "+($("#lim").value||100)+" caracteres. Responda só com o título.";
+const pD=p=>ctx(p)+"\nCrie a descrição completa com estas seções, separadas por uma linha de 20 caracteres ━: 🎮 APRESENTAÇÃO DO PRODUTO, ✅ O QUE VOCÊ RECEBE (lista), 🎁 BÔNUS ESPECIAL (só se informado; senão omita ou [CONFIRMAR]), 📦 COMO FUNCIONA A ENTREGA, ⚠️ INFORMAÇÕES IMPORTANTES, 💬 DÚVIDAS FREQUENTES (como funciona, como recebo, duração, suporte). Responda só com o texto, sem markdown.";
+async function ask(prompt){
+ const key=getKey();
+ if(!key)throw new Error("Cole sua chave gratuita da Groq no campo 🔑 acima e toque em Salvar chave.");
+ const post=extra=>fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"content-type":"application/json","authorization":"Bearer "+key},body:JSON.stringify(Object.assign({model:"openai/gpt-oss-120b",max_completion_tokens:3000,messages:[{role:"system",content:SYS},{role:"user",content:prompt}]},extra))});
+ let r;
+ try{
+  r=await post({reasoning_effort:"low"});
+  if(r.status===400)r=await post({});
+ }catch(e){throw new Error("Sem conexão com a API. Verifique sua internet.")}
+ const d=await r.json().catch(()=>({}));
+ if(!r.ok){
+  if(r.status===401)throw new Error("Chave inválida. Gere uma nova no console da Groq e salve de novo.");
+  if(r.status===429)throw new Error("Limite gratuito atingido. Aguarde cerca de 1 minuto e tente de novo.");
+  throw new Error((d.error&&d.error.message)||("Erro da API ("+r.status+")."));
+ }
+ const t=((((d.choices||[])[0]||{}).message||{}).content||"").trim();
+ if(!t)throw new Error("A IA não retornou texto. Tente gerar novamente.");
+ return t;
+}
+function busy(b,on,e){b.disabled=on;if(on){b.dataset.o=b.textContent;b.textContent="⏳ Gerando…"}else b.textContent=b.dataset.o||b.textContent;if(e)e.textContent=""}
+async function run(btn,err,p,what){
+ if(!p){err.textContent="Digite o nome do produto.";return}
+ busy(btn,true,err);st.p=p;
+ try{
+  const [t,d]=await Promise.all([what.includes("t")?ask(pT(p)):null,what.includes("d")?ask(pD(p)):null]);
+  if(t!==null)st.t=t;if(d!==null)st.d=d;
+  st.t=st.t.replace(/^["“]|["”]$/g,"");
+  show();save();
+ }catch(e){err.textContent=e.message||e.text||"Erro ao gerar. Tente novamente."}
+ busy(btn,false);
+}
+function show(){$("#res").style.display="";$("#rt").value=st.t;$("#rd").value=st.d;upd();$("#res").scrollIntoView({behavior:"smooth"})}
+function upd(){st.t=$("#rt").value;st.d=$("#rd").value;const l=+$("#lim").value||100,n=st.t.length;
+ $("#cc").textContent=n+" / "+l+" caracteres";$("#cc").className="cnt"+(n>l?" bad":"");
+ const p=$("#prev");p.innerHTML="";const b=document.createElement("b");b.textContent=st.t;p.append(b,document.createTextNode(st.d));
+ $("#fav").classList.toggle("on",favs.some(f=>f.t===st.t&&f.d===st.d));
+}
+function save(){
+ const e={id:Date.now(),p:st.p,t:st.t,d:st.d};
+ hist=[e,...hist.filter(h=>h.t!==e.t)].slice(0,30);sv("rs_h",hist);rl();
+}
+function rl(){
+ const a=tab==="h"?hist:favs,L=$("#list");L.innerHTML="";
+ if(!a.length){L.innerHTML='<small style="color:var(--mut)">Nada por aqui ainda.</small>';return}
+ a.forEach(x=>{const i=document.createElement("div");i.className="item";
+  const t=document.createElement("div");t.className="t";t.textContent=x.t;
+  const s=document.createElement("small");s.textContent=x.p;
+  const r=document.createElement("div");r.className="row";
+  const o=document.createElement("button");o.className="g";o.textContent="Abrir";o.onclick=()=>{st={...st,t:x.t,d:x.d,p:x.p};show()};
+  const c=document.createElement("button");c.className="g";c.textContent="📋 Copiar";c.onclick=()=>cp(x.t+"\n\n"+x.d);
+  const d=document.createElement("button");d.className="g";d.textContent="🗑️";d.onclick=()=>{if(tab==="h"){hist=hist.filter(h=>h.id!==x.id);sv("rs_h",hist)}else{favs=favs.filter(h=>h.id!==x.id);sv("rs_f",favs)}rl();upd()};
+  r.append(o,c,d);i.append(t,s,r);L.append(i)});
+}
+async function cp(txt){try{await navigator.clipboard.writeText(txt);toast("Copiado ✓")}catch(e){const a=document.createElement("textarea");a.value=txt;document.body.append(a);a.select();try{document.execCommand("copy");toast("Copiado ✓")}catch(x){toast("Não foi possível copiar")}a.remove()}}
+$("#bt").onclick=()=>{st.v++;run($("#bt"),$("#et"),$("#pt").value.trim(),"t")};
+$("#bd").onclick=()=>{st.v++;run($("#bd"),$("#ed"),$("#pd").value.trim(),"d")};
+$("#bf").onclick=()=>{st.v++;run($("#bf"),$("#ef"),$("#pf").value.trim(),"td")};
+$("#nt").onclick=()=>{st.v++;run($("#nt"),$("#et"),st.p,"t")};
+$("#nd").onclick=()=>{st.v++;run($("#nd"),$("#ed"),st.p,"d")};
+$("#ns").onclick=()=>{st.v++;run($("#ns"),$("#ef"),st.p,"td")};
+$("#rt").oninput=$("#rd").oninput=$("#lim").oninput=upd;
+document.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{upd();cp(b.dataset.c==="t"?st.t:b.dataset.c==="d"?st.d:st.t+"\n\n"+st.d)});
+$("#fav").onclick=()=>{upd();const i=favs.findIndex(f=>f.t===st.t&&f.d===st.d);if(i>=0)favs.splice(i,1);else favs.unshift({id:Date.now(),p:st.p,t:st.t,d:st.d});sv("rs_f",favs);upd();rl();toast(i>=0?"Removido":"Favoritado ⭐")};
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{tab=b.dataset.tab;document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("a",x===b));rl()});
+rl();
+function getKey(){try{return localStorage.getItem("rs_qkey")||""}catch(e){return""}}
+function ks(){$("#ks").textContent=getKey()?"✅ Chave salva só neste navegador.":"A chave fica salva só neste navegador e é enviada apenas à Groq.";$("#key").value=""}
+$("#sk").onclick=()=>{const k=$("#key").value.trim();if(!k){toast("Cole a chave primeiro");return}try{localStorage.setItem("rs_qkey",k);toast("Chave salva ✓")}catch(e){toast("Não foi possível salvar")}ks()};
+$("#ck").onclick=()=>{try{localStorage.removeItem("rs_qkey")}catch(e){}ks();toast("Chave removida")};
+ks();
+</script>
+</body>
+</html>
